@@ -137,6 +137,7 @@ const updateProfile = asyncHandler(async (req, res) => {
                 fullname: updatedUser.fullname,
                 email: updatedUser.email,
                 profilePic: updatedUser.profilePic,
+                createdAt: updatedUser.createdAt,
             },
             message: "Profile Picture updated successfully",
         });

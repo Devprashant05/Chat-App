@@ -52,7 +52,7 @@ const LoginPage = () => {
                                 </span>
                             </label>
                             <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <div className="absolute inset-y-0 left-0 pl-3 z-10 flex items-center pointer-events-none">
                                     <Mail className="size-5 text-base-content/40" />
                                 </div>
                                 <input
@@ -76,8 +76,8 @@ const LoginPage = () => {
                                 </span>
                             </label>
                             <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Lock className="size-5 text-base-content/60" />
+                                <div className="absolute inset-y-0 left-0 z-10 pl-3 flex items-center pointer-events-none">
+                                    <Lock className="size-5 text-base-content/40" />
                                 </div>
                                 <input
                                     type={showPassword ? "text" : "password"}
@@ -123,9 +123,9 @@ const LoginPage = () => {
                     </form>
                     <div className="text-center">
                         <p className="text-base-content/60">
-                            Already have an account?{" "}
-                            <Link to={"/login"} className="link link-primary">
-                                Sign In
+                            Don't have an account?{" "}
+                            <Link to={"/signup"} className="link link-primary">
+                                Sign Up
                             </Link>
                         </p>
                     </div>

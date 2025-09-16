@@ -1,6 +1,9 @@
 import { create } from "zustand";
 import axios from "../lib/axios";
 import toast from "react-hot-toast";
+import { io } from "socket.io-client";
+
+const BASE_URL = "http://localhost:5500";
 
 export const useAuthStore = create((set, get) => ({
     user: null,
@@ -9,12 +12,14 @@ export const useAuthStore = create((set, get) => ({
     isUpdatingProfile: false,
     isCheckingAuth: true,
     onlineUsers: [],
+    socket: null,
 
     checkAuth: async () => {
         set({ isCheckingAuth: true });
         try {
             const response = await axios.get("/auth/check");
             set({ user: response.data });
+            get().connectSocket();
         } catch (error) {
             console.log("Error in checkAuth:", error);
             set({ user: null });
@@ -30,6 +35,7 @@ export const useAuthStore = create((set, get) => ({
             console.log(result.data.user);
             set({ user: result.data.user });
             toast.success("Account Created Successfully");
+            get().connectSocket();
         } catch (error) {
             toast.error(error.response.data.message);
         } finally {
@@ -43,6 +49,7 @@ export const useAuthStore = create((set, get) => ({
             const result = await axios.post("/auth/login", data);
             set({ user: result.data.user });
             toast.success("Logged in successfully");
+            get().connectSocket();
         } catch (error) {
             toast.error(error.response.data.message);
         } finally {
@@ -55,6 +62,7 @@ export const useAuthStore = create((set, get) => ({
             await axios.post("/auth/logout");
             set({ user: null });
             toast.success("Logged out successfully");
+            get().disconnectSocket();
         } catch (error) {
             toast.error(error.response.data.message);
         }
@@ -72,5 +80,28 @@ export const useAuthStore = create((set, get) => ({
             set({ isUpdatingProfile: false });
         }
         console.log("Data come in hook", data.profilePic);
+    },
+
+    connectSocket: () => {
+        const { user } = get();
+
+        if (!user || get().socket?.connected) return;
+        
+        const socket = io(BASE_URL, {
+            query: {
+                userId: user._id,
+            },
+        });
+
+        socket.connect();
+        set({ socket: socket });
+
+        socket.on("getOnlineUsers", (userIds) => {
+            set({ onlineUsers: userIds });
+        });
+    },
+
+    disconnectSocket: () => {
+        if (get().socket?.connected) get().socket.disconnect();
     },
 }));

@@ -3,6 +3,7 @@ import { Message } from "../models/message.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { isValidObjectId } from "mongoose";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { getReceieverSocketId, io } from "../utils/socket.js";
 
 const getUserForSidebar = asyncHandler(async (req, res) => {
     try {
@@ -79,13 +80,17 @@ const sendMessage = asyncHandler(async (req, res) => {
             image: imageUrl || "",
         });
 
-        // TODO: Real time functionality goes here => socket.io
+        // get receiver socket id and emit the message only to him
+        const receiverSocketId = getReceieverSocketId(receiverId);
+
+        if (receiverId) {
+            io.to(receiverSocketId).emit("newMessage", newMessage);
+        }
 
         res.status(200).json({
             newMessage,
             message: "New message created successfully",
         });
-        
     } catch (error) {
         console.log("Error in sendMessage controller, ", error);
         return res.status(500).json({ message: "Intrnal Server Error" });

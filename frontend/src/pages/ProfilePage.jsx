@@ -9,7 +9,6 @@ const ProfilePage = () => {
     const handleImageUpload = async (e) => {
         const profilePic = e.target.files[0];
         if (!profilePic) {
-            console.log("no file selected");
             return;
         }
 

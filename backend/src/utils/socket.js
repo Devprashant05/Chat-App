@@ -32,7 +32,10 @@ io.on("connection", (socket) => {
     console.log("A user connected", socket.id);
     //getting user id from useAuthStore and save in userSocketMap object
     const userId = socket.handshake.query.userId;
-    if (userId) userSocketMap[userId] = socket.id;
+
+    if (userId) {
+        userSocketMap[userId] = socket.id;
+    }
 
     // io.emit is used to send event to all the connected clients
     io.emit("getOnlineUsers", Object.keys(userSocketMap));

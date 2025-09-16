@@ -93,13 +93,13 @@ export const useAuthStore = create((set, get) => ({
                 userId: user._id,
             },
         });
-
         socket.connect();
         set({ socket: socket });
 
-        socket.on("getOnlineUsers", (userIds) => {
+        socket.on("getOnlineUsers", (userIds) => { 
             set({ onlineUsers: userIds });
         });
+
     },
 
     disconnectSocket: () => {
